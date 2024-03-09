@@ -28,7 +28,7 @@
     -fx-pref-width: 200px;
 }
 
-.button {
+.register-button {
     -fx-background-color: #4CAF50; /* Green */
     background-color: #4CAF50;
     -fx-border: none;
@@ -47,6 +47,20 @@
 .register-button:hover {
     -fx-background-color: #45a049; /* Darker Green */
     background-color: #45a049;
+}
+
+.signin-button {
+    -fx-padding: 8px 16px;
+    padding: 8px 16px;
+    -fx-font-size: 14px;
+    font-size: 14px;
+    -fx-background-color: #008CBA; /* Blue */
+    background-color: #008CBA;
+    -fx-text-fill: white;
+    -fx-border-radius: 5px;
+    border-radius: 5px;
+    -fx-border-color: transparent;
+    border-color: transparent;
 }
 
 .login-layout {
