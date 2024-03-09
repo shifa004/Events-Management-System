@@ -29,7 +29,10 @@ public class UserRegistration {
         VBox registerLayout = new VBox(10);
         registerLayout.getStyleClass().add("register-layout");
         Button registerButton = new Button("Register");
-        registerButton.getStyleClass().add("register-button");
+        registerButton.getStyleClass().add("button");
+
+        Button loginButton = new Button("Login");
+        loginButton.getStyleClass().add("button");        
 
         registerButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -38,14 +41,25 @@ public class UserRegistration {
             }
         });
 
+        loginButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserLogin userLogin = new UserLogin(stage);
+                userLogin.initializeComponents();
+            }
+        });
+
         registerLayout.getChildren().addAll(
                 createLabelWithStyle("Username:"), usernameField,
                 createLabelWithStyle("Password:"), passwordField, 
                 createLabelWithStyle("First Name:"), firstNameField, 
                 createLabelWithStyle("Last Name"), lastNameField,
-                registerButton);
+                registerButton,
+                createLabelWithStyle("Already have an account?"),
+                loginButton);
 
-        registerScene = new Scene(registerLayout, 300, 375);
+
+        registerScene = new Scene(registerLayout, 300, 450);
         registerScene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         stage.setTitle("User Registration");
         stage.setScene(registerScene);
