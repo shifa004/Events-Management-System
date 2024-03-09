@@ -28,11 +28,11 @@ public class UserRegistration {
     public void initializeComponents() {
         VBox registerLayout = new VBox(10);
         registerLayout.getStyleClass().add("register-layout");
-        Button registerButton = new Button("Register");
-        registerButton.getStyleClass().add("button");
+        Button registerButton = new Button("Sign Up");
+        registerButton.getStyleClass().add("register-button");
 
-        Button loginButton = new Button("Login");
-        loginButton.getStyleClass().add("button");        
+        Button loginButton = new Button("Sign In");
+        loginButton.getStyleClass().add("signin-button");        
 
         registerButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
