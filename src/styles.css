@@ -131,3 +131,10 @@
     -fx-background-color: #0077a3; /* Darker Blue */
     background-color: #0077a3;
 }
+
+.search-field {
+    -fx-prompt-text-fill: gray;
+    -fx-padding: 5px 10px; /* Adjust padding values as needed */
+    padding: 5px 10px;
+    -fx-pref-width: 250px;
+}
