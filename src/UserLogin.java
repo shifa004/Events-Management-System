@@ -85,9 +85,15 @@ public class UserLogin {
             statement.setString(2, password);
             ResultSet rs = statement.executeQuery();
             
-            if (rs.next()) {
+           if (rs.next()) {
+                String user = rs.getString("username");
+                if (user.match("admin")) {
+                // Redirect to admin dashboard
+                AdminDashboard adminDashboard = new AdminDashboard(stage);
+                adminDashboard.initializeComponents();
+            } else {
                 UserChangePassword changePassword = new UserChangePassword(stage, username);
-                changePassword.initializeComponents();
+                changePassword.initializeComponents();}
             } else {
                 showAlert("Authentication Failed", "Invalid username or password.");
             }
