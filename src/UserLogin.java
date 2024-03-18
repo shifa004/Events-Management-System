@@ -87,13 +87,13 @@ public class UserLogin {
             
            if (rs.next()) {
                 String user = rs.getString("username");
-                if (user.match("admin")) {
+                if (user.matches("admin")) {
                 // Redirect to admin dashboard
                 AdminDashboard adminDashboard = new AdminDashboard(stage);
                 adminDashboard.initializeComponents();
             } else {
-                UserChangePassword changePassword = new UserChangePassword(stage, username);
-                changePassword.initializeComponents();}
+                UserDashboard dashboard = new UserDashboard(stage, username);
+                dashboard.initializeComponents();}
             } else {
                 showAlert("Authentication Failed", "Invalid username or password.");
             }
