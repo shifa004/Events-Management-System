@@ -6,14 +6,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 
 public class AdminDashboard {
     VBox adminLayout = new VBox(10);
@@ -22,7 +20,6 @@ public class AdminDashboard {
     // private TextField usernameField = new TextField();
     // private PasswordField passwordField = new PasswordField();
     private Stage stage;
-
     
     public AdminDashboard(Stage primaryStage) {
         this.stage = primaryStage;
@@ -84,8 +81,12 @@ public class AdminDashboard {
                 // Process each event and add labels to the VBox
                 Integer id = rs.getInt("id");
                 String name = rs.getString("name");
-                String type = rs.getString("type");
                 String description = rs.getString("description");
+                String date = rs.getString("date");
+                String time = rs.getString("time");
+                String location = rs.getString("location");
+                String image = rs.getString("image");
+                String category = rs.getString("category");
 
                 VBox eventBox = new VBox(10);
                 eventBox.setStyle(
@@ -96,7 +97,7 @@ public class AdminDashboard {
                 Edit.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        EditStage(id, name, type, description);
+                        EditStage(id, name, description, date, time, location, image, category);
                     }
                 });
                 Button Delete = new Button("Archive");
@@ -110,28 +111,52 @@ public class AdminDashboard {
                 buttonBox.getChildren().addAll(Edit, Delete);
                 buttonBox.setPadding(new Insets(0, 10, 0, 0));
                 Label nameLabel = new Label("Event Name: ");
-                Label typeLabel = new Label("Event Type: ");
                 Label descriptionLabel = new Label("Event Description: ");
+                Label dateLabel = new Label("Event Date:");
+                Label timeLabel = new Label("Event Time:");
+                Label locationLabel = new Label("Event Location:");
+                Label imageLabel = new Label("Event Image:");
+                Label categoryLabel = new Label("Event Category:");
 
                 Label nameValue = new Label(name);
-                Label typeValue = new Label(type);
                 Label descriptionValue = new Label(description);
+                Label dateValue = new Label(date);
+                Label timeValue = new Label(time);
+                Label locationValue = new Label(location);
+                Label imageValue = new Label(image);
+                Label categoryValue = new Label(category);
 
                 // Set the font weight to bold
                 nameLabel.setStyle("-fx-font-weight: bold;");
-                typeLabel.setStyle("-fx-font-weight: bold;");
                 descriptionLabel.setStyle("-fx-font-weight: bold;");
+                dateLabel.setStyle("-fx-font-weight: bold;");
+                timeLabel.setStyle("-fx-font-weight: bold;");
+                locationLabel.setStyle("-fx-font-weight: bold;");
+                imageLabel.setStyle("-fx-font-weight: bold;");
+                categoryLabel.setStyle("-fx-font-weight: bold;");
 
                 HBox combo1 = new HBox();
                 combo1.getChildren().addAll(nameLabel, nameValue);
 
                 HBox combo2 = new HBox();
-                combo2.getChildren().addAll(typeLabel, typeValue);
+                combo2.getChildren().addAll(descriptionLabel, descriptionValue);
 
                 HBox combo3 = new HBox();
-                combo3.getChildren().addAll(descriptionLabel, descriptionValue);
+                combo2.getChildren().addAll(dateLabel, dateValue);
 
-                eventBox.getChildren().addAll(combo1, combo2, combo3, buttonBox);
+                HBox combo4 = new HBox();
+                combo2.getChildren().addAll(timeLabel, timeValue);
+
+                HBox combo5 = new HBox();
+                combo2.getChildren().addAll(locationLabel, locationValue);
+
+                HBox combo6 = new HBox();
+                combo2.getChildren().addAll(imageLabel, imageValue);
+
+                HBox combo7 = new HBox();
+                combo2.getChildren().addAll(categoryLabel, categoryValue);
+
+                eventBox.getChildren().addAll(combo1, combo2, combo3, combo4, combo5, combo6, combo7, buttonBox);
 
                 eventsPane.getChildren().add(eventBox);
             }
@@ -147,24 +172,34 @@ public class AdminDashboard {
     }
 
     public void AddStage() {
-
         VBox addEventLayout = new VBox(10);
         addEventLayout.setPadding(new Insets(10));
         addEventLayout.setStyle("-fx-background-color: #ffffff;");
 
-
         Label namelabel = new Label("Event Name:");
-        Label typelabel = new Label("Event Type:");
         Label desclabel = new Label("Event Description:");
+        Label dateLabel = new Label("Event Date:");
+        Label timeLabel = new Label("Event Time:");
+        Label locationLabel = new Label("Event Location:");
+        Label imageLabel = new Label("Event Image:");
+        Label categoryLabel = new Label("Event Category:");
 
         // Set the font weight to bold for each label
         namelabel.setStyle("-fx-font-weight: bold;");
-        typelabel.setStyle("-fx-font-weight: bold;");
         desclabel.setStyle("-fx-font-weight: bold;");
+        dateLabel.setStyle("-fx-font-weight: bold;");
+        timeLabel.setStyle("-fx-font-weight: bold;");
+        locationLabel.setStyle("-fx-font-weight: bold;");
+        imageLabel.setStyle("-fx-font-weight: bold;");
+        categoryLabel.setStyle("-fx-font-weight: bold;");
 
         TextField eventNameField = new TextField();
-        TextField eventTypeField = new TextField();
         TextField eventDescriptionField = new TextField();
+        TextField eventDateField = new TextField();
+        TextField eventTimeField = new TextField();
+        TextField eventLocationField = new TextField();
+        TextField eventImageField = new TextField();
+        TextField eventCategoryField = new TextField();
 
         Button addButton = new Button("Add Event");
         addButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -172,9 +207,14 @@ public class AdminDashboard {
             public void handle(ActionEvent event) {
                 // Handle adding the event to the database
                 String name = eventNameField.getText();
-                String type = eventTypeField.getText();
                 String description = eventDescriptionField.getText();
-                addEventToDatabase(name, type, description);
+                String date = eventDateField.getText();
+                String time = eventTimeField.getText();
+                String location = eventLocationField.getText();
+                String image = eventImageField.getText();
+                String category = eventCategoryField.getText();
+
+                addEventToDatabase(name, description, date, time, location, image, category);
                 initializeComponents();
             }
         });
@@ -182,8 +222,12 @@ public class AdminDashboard {
         addEventLayout.getChildren().addAll(
                 new Label("Add Event:"),
                 namelabel, eventNameField,
-                typelabel, eventTypeField,
                 desclabel, eventDescriptionField,
+                dateLabel, eventDateField,
+                timeLabel, eventTimeField,
+                locationLabel, eventLocationField,
+                imageLabel, eventImageField,
+                categoryLabel, eventCategoryField,
                 addButton);
 
                 Scene addscene = new Scene(addEventLayout,600,400);
@@ -192,7 +236,7 @@ public class AdminDashboard {
                 stage.setScene(addscene);
     }
 
-    private void EditStage(Integer id, String name, String type, String description) {
+    private void EditStage(Integer id, String name, String description, String date, String time, String location, String image, String category) {
         // Stage editStage = new Stage();
 
         VBox editLayout = new VBox(10);
@@ -200,34 +244,54 @@ public class AdminDashboard {
         editLayout.setStyle("-fx-background-color: #ffffff;");
 
         TextField nameField = new TextField(name);
-        TextField typeField = new TextField(type);
         TextField descriptionField = new TextField(description);
+        TextField dateField = new TextField(date);
+        TextField timeField = new TextField(time);
+        TextField locationField = new TextField(location);
+        TextField imageField = new TextField(image);
+        TextField categoryField = new TextField(category);
 
         Button saveButton = new Button("Save");
         saveButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {
-                
-                updateEventDetails(id, nameField.getText(), typeField.getText(),
-                descriptionField.getText());
-
+            public void handle(ActionEvent event) {                
+                updateEventDetails(id, 
+                nameField.getText(), 
+                descriptionField.getText(),
+                dateField.getText(),
+                timeField.getText(),
+                locationField.getText(),
+                imageField.getText(),
+                categoryField.getText());
             }
         });
         Label header = new Label("Edit Event: ");
         Label nameLabel = new Label("Event Name: ");
-        Label typeLabel = new Label("Event Type: ");
         Label descriptionLabel = new Label("Event Description: ");
+        Label dateLabel = new Label("Event Date: ");
+        Label timeLabel = new Label("Event Time: ");
+        Label locationLabel = new Label("Event Location: ");
+        Label imageLabel = new Label("Event Image: ");
+        Label categoryLabel = new Label("Event Category: ");
 
         header.setStyle("-fx-font-weight: bold; -fx-font-size:16");
         nameLabel.setStyle("-fx-font-weight: bold;");
-        typeLabel.setStyle("-fx-font-weight: bold;");
         descriptionLabel.setStyle("-fx-font-weight: bold;");
+        dateLabel.setStyle("-fx-font-weight: bold;");
+        timeLabel.setStyle("-fx-font-weight: bold;");
+        locationLabel.setStyle("-fx-font-weight: bold;");
+        imageLabel.setStyle("-fx-font-weight: bold;");
+        categoryLabel.setStyle("-fx-font-weight: bold;");
 
         editLayout.getChildren().addAll(
                 header,
                 nameLabel, nameField,
-                typeLabel, typeField,
                 descriptionLabel, descriptionField,
+                dateLabel, dateField,
+                timeLabel, timeField,
+                locationLabel, locationField,
+                imageLabel, imageField,
+                categoryLabel, categoryField,
                 saveButton);
 
         Scene editScene = new Scene(editLayout, 600, 400);
@@ -236,14 +300,18 @@ public class AdminDashboard {
         stage.setScene(editScene);
     }
 
-    private void addEventToDatabase(String name, String type, String description) {
+    private void addEventToDatabase(String name, String description, String date, String time, String location, String image, String category) {
         Connection con = DBUtils.establishConnection();
-        String insertQuery = "INSERT INTO events (name, type, description) VALUES (?, ?, ?)";
+        String insertQuery = "INSERT INTO events (name, description, date, time, location, image, category) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = con.prepareStatement(insertQuery)) {
             preparedStatement.setString(1, name);
-            preparedStatement.setString(2, type);
-            preparedStatement.setString(3, description);
+            preparedStatement.setString(2, description);
+            preparedStatement.setString(3, date);
+            preparedStatement.setString(4, time);
+            preparedStatement.setString(5, location);
+            preparedStatement.setString(6, image);
+            preparedStatement.setString(7, category);
 
             int rowsAffected = preparedStatement.executeUpdate();
 
@@ -260,16 +328,19 @@ public class AdminDashboard {
         }
     }
 
-
-    private void updateEventDetails(Integer id, String name, String type, String description) {
+    private void updateEventDetails(Integer id, String name, String description, String date, String time, String location, String image, String category) {
         Connection con = DBUtils.establishConnection();
-        String updateQuery = "UPDATE events SET name=?, type=?, description=? WHERE id=?";
+        String updateQuery = "UPDATE events SET name=?, description=?, date=?, time=?, location=?, image=?, category=? WHERE id=?";
 
         try (PreparedStatement preparedStatement = con.prepareStatement(updateQuery)) {
             preparedStatement.setString(1, name);
-            preparedStatement.setString(2, type);
-            preparedStatement.setString(3, description);
-            preparedStatement.setInt(4, id);
+            preparedStatement.setString(2, description);
+            preparedStatement.setString(3, date);
+            preparedStatement.setString(4, time);
+            preparedStatement.setString(5, location);
+            preparedStatement.setString(6, image);
+            preparedStatement.setString(7, category);
+            preparedStatement.setInt(8, id);
 
             int rowsAffected = preparedStatement.executeUpdate();
 
