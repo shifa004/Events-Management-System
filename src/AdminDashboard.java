@@ -135,27 +135,27 @@ public class AdminDashboard {
                 imageLabel.setStyle("-fx-font-weight: bold;");
                 categoryLabel.setStyle("-fx-font-weight: bold;");
 
-                HBox combo1 = new HBox();
+               HBox combo1 = new HBox();
                 combo1.getChildren().addAll(nameLabel, nameValue);
 
                 HBox combo2 = new HBox();
                 combo2.getChildren().addAll(descriptionLabel, descriptionValue);
 
                 HBox combo3 = new HBox();
-                combo2.getChildren().addAll(dateLabel, dateValue);
+                combo3.getChildren().addAll(dateLabel, dateValue);
 
                 HBox combo4 = new HBox();
-                combo2.getChildren().addAll(timeLabel, timeValue);
+                combo4.getChildren().addAll(timeLabel, timeValue);
 
                 HBox combo5 = new HBox();
-                combo2.getChildren().addAll(locationLabel, locationValue);
+                combo5.getChildren().addAll(locationLabel, locationValue);
 
                 HBox combo6 = new HBox();
-                combo2.getChildren().addAll(imageLabel, imageValue);
+                combo6.getChildren().addAll(imageLabel, imageValue);
 
                 HBox combo7 = new HBox();
-                combo2.getChildren().addAll(categoryLabel, categoryValue);
-
+                combo7.getChildren().addAll(categoryLabel, categoryValue);
+                
                 eventBox.getChildren().addAll(combo1, combo2, combo3, combo4, combo5, combo6, combo7, buttonBox);
 
                 eventsPane.getChildren().add(eventBox);
