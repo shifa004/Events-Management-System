@@ -1,7 +1,6 @@
 import java.sql.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-// import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -93,8 +92,8 @@ public class UserRegistration {
             int rs = statement.executeUpdate();
             
             if (rs==1) {
-                UserChangePassword changePassword = new UserChangePassword(stage, username);
-                changePassword.initializeComponents();
+                UserDashboard dashboard = new UserDashboard(stage, username);
+                dashboard.initializeComponents();
             } else {
                 showAlert("Authentication Failed", "Invalid username or password.");
             }
