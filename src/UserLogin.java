@@ -68,6 +68,9 @@ public class UserLogin {
 
         //Add scene to stage
         stage.setScene(loginScene);
+        stage.setWidth(300);
+        stage.setHeight(350);
+        stage.centerOnScreen();
         stage.show();
 
         loginScene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
