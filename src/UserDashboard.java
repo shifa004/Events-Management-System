@@ -11,14 +11,13 @@ import javafx.scene.control.ScrollPane;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Button;
@@ -27,10 +26,13 @@ public class UserDashboard {
     private Scene dashScene;
     
     private Stage stage;
+    private String username;
     private static final Map<Integer, Map<String, Object>> events = getEvents();
+    private FlowPane homeLayout;
 
     public UserDashboard(Stage primaryStage, String username) {
         this.stage = primaryStage;
+        this.username = username;
     }
 
     public void initializeComponents() {
@@ -41,29 +43,62 @@ public class UserDashboard {
         // Search field
         TextField searchField = new TextField();
         searchField.setPromptText("Search...");
-        searchField.getStyleClass().add("search-field"); // Apply the CSS style
+        searchField.getStyleClass().add("search-field");
 
         // Menu
-        Menu allEventsItem = new Menu("All Events");
-        Menu sports = new Menu("Sports");
-        Menu entertainment = new Menu("Entertainment");
-        Menu artCulture = new Menu("Arts and Culture");
-        Menu community = new Menu("Community");
-        Menu others = new Menu("Others");
-        MenuBar menuBar = new MenuBar(allEventsItem, sports, entertainment, artCulture, community, others);
+        Button allEventsButton = new Button("All Events");
+        Button sportsButton = new Button("Sports");
+        Button entertainmentButton = new Button("Entertainment");
+        Button artCultureButton = new Button("Arts and Culture");
+        Button communityButton = new Button("Community");
+        Button othersButton = new Button("Others");
+        
+        allEventsButton.setOnAction(event -> populateEvents("", null));
+        sportsButton.setOnAction(event -> populateEvents("", "Sports"));
+        entertainmentButton.setOnAction(event -> populateEvents("", "Entertainment"));
+        artCultureButton.setOnAction(event -> populateEvents("", "Arts and Culture"));
+        communityButton.setOnAction(event -> populateEvents("", "Community"));
+        othersButton.setOnAction(event -> populateEvents("", "Others"));
 
-        // Profile button
-        Button profileButton = new Button("Profile");
+        allEventsButton.getStyleClass().add("menu-button");
+        sportsButton.getStyleClass().add("menu-button");
+        entertainmentButton.getStyleClass().add("menu-button");
+        artCultureButton.getStyleClass().add("menu-button");
+        communityButton.getStyleClass().add("menu-button");
+        othersButton.getStyleClass().add("menu-button");
+        othersButton.getStyleClass().add("last-child");
+        
+        // Add buttons to an HBox
+        HBox menuBox = new HBox(allEventsButton, sportsButton, entertainmentButton, artCultureButton, communityButton, othersButton);
+        menuBox.setAlignment(Pos.CENTER);
+        menuBox.setSpacing(10);
+
+        // Profile and logout button
+        Button profileButton = new Button("View Profile");
+        Button logoutButton = new Button("Logout");
+
+        profileButton.setOnAction(event -> {
+            UserProfile prof = new UserProfile(stage, username);
+            prof.initializeComponents();
+        });
+        logoutButton.setOnAction(event -> {
+            UserLogin login = new UserLogin(stage);
+            login.initializeComponents();
+        });
 
         //Adding menu and profile button to HBox and setting the menu in center and profile button on the right
-        HBox topBox = new HBox(menuBar, profileButton);
+        HBox topBox = new HBox(menuBox, profileButton);
         topBox.setSpacing(10);
         topBox.setAlignment(Pos.CENTER);
 
         BorderPane topLayout = new BorderPane();
-        topLayout.setCenter(menuBar); 
+        topLayout.setCenter(menuBox); 
         topLayout.setRight(profileButton);
         topLayout.setPadding(new Insets(10, 10, 10, 10));
+
+        HBox rightButtons = new HBox(profileButton, logoutButton);
+        rightButtons.setSpacing(10); // Spacing between buttons
+        topLayout.setRight(rightButtons);
 
         //Adding heading and search field to VBox
         VBox headSearch = new VBox(heading, searchField);
@@ -71,52 +106,16 @@ public class UserDashboard {
         headSearch.setAlignment(Pos.CENTER);
 
         //Layout for Events
-        FlowPane homeLayout = new FlowPane();
+        homeLayout = new FlowPane();
         homeLayout.setPadding(new Insets(10));
         homeLayout.setHgap(10);
         homeLayout.setVgap(10);
-        // homeLayout.getStyleClass().add("login-layout");
 
-        double imageWidth = 230;
-        double imageHeight = 200;
-        //Controls
-        for (Map<String, Object> eventData : events.values()) {
-            String name = (String) eventData.get("name");
-            String imageUrl = (String) eventData.get("image");
+        //Search Functionality
+        searchField.addEventHandler(KeyEvent.KEY_RELEASED, e -> populateEvents(searchField.getText(), null));
 
-            ImageView imageView = new ImageView(new Image(imageUrl));
-            imageView.setFitWidth(imageWidth);
-            imageView.setFitHeight(imageHeight);
+        populateEvents("", null);
 
-            Label nameLabel = new Label(name);
-            nameLabel.setMaxWidth(imageWidth);
-            nameLabel.setWrapText(true);
-            nameLabel.setAlignment(Pos.CENTER);
-
-            VBox container = new VBox(imageView, nameLabel);
-            container.setMaxWidth(imageWidth);
-            container.setMaxHeight(imageHeight);
-            container.setAlignment(Pos.CENTER);
-
-            // Set eventData as a property of the container
-            container.getProperties().put("eventData", eventData);
-
-            container.setOnMouseClicked(event -> {
-                // Retrieve eventData from the container when clicked
-                @SuppressWarnings("unchecked")
-                Map<String, Object> clickedEventData = (Map<String, Object>) container.getProperties().get("eventData");
-                
-                EventDetails eventDetails = new EventDetails(stage, name);
-                eventDetails.initializeComponents(clickedEventData);
-
-                // Your action here using clickedEventData
-                System.out.println("Container clicked for event: " + clickedEventData);
-                // You can access other properties of clickedEventData as well
-            });        
-    
-
-            homeLayout.getChildren().add(container);
-        }
         homeLayout.setAlignment(Pos.CENTER);
         ScrollPane scrollPane = new ScrollPane(homeLayout);
         scrollPane.setFitToWidth(true);
@@ -136,10 +135,64 @@ public class UserDashboard {
 
         //Add scene to stage
         stage.setScene(dashScene);
+        stage.hide();
         stage.setMaximized(true);
         stage.show();
 
         dashScene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+    }
+
+    private void populateEvents(String query, String categoryFilter) {
+        homeLayout.getChildren().clear();
+        double imageWidth = 230;
+        double imageHeight = 200;
+        // Filter and display events based on search query and category
+        events.values().stream()
+              .filter(eventData -> {
+                  String name = (String) eventData.get("name");
+                  String category = (String) eventData.get("category");
+                  boolean nameMatches = name.toLowerCase().contains(query.toLowerCase());
+                  boolean categoryMatches = categoryFilter == null || categoryFilter.isBlank() || category.equalsIgnoreCase(categoryFilter);
+                  return nameMatches && categoryMatches;
+              })
+              .forEach(eventData -> {
+                    String name = (String) eventData.get("name");
+                    String imageUrl = (String) eventData.get("image");
+        
+                    ImageView imageView = new ImageView(new Image(imageUrl));
+                    imageView.setFitWidth(imageWidth);
+                    imageView.setFitHeight(imageHeight);
+        
+                    Label nameLabel = new Label(name);
+                    nameLabel.setMaxWidth(imageWidth);
+                    nameLabel.setWrapText(true);
+                    nameLabel.setAlignment(Pos.CENTER);
+        
+                    VBox container = new VBox(imageView, nameLabel);
+                    container.setMaxWidth(imageWidth);
+                    container.setMaxHeight(imageHeight);
+                    container.setAlignment(Pos.CENTER);
+        
+                    // Set eventData as a property of the container
+                    container.getProperties().put("eventData", eventData);
+        
+                    container.setOnMouseClicked(event -> {
+                        // Retrieve eventData from the container when clicked
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> clickedEventData = (Map<String, Object>) container.getProperties().get("eventData");
+                        
+                        EventDetails eventDetails = new EventDetails(stage, name);
+                        eventDetails.initializeComponents(clickedEventData);
+        
+                        // Your action here using clickedEventData
+                        System.out.println("Container clicked for event: " + clickedEventData);
+                        // You can access other properties of clickedEventData as well
+                    });        
+                    
+                    homeLayout.getChildren().add(container);
+              });
+        
+        // You might need to adjust this section to correctly re-add homeLayout to the scene, if necessary
     }
 
     private static Map<Integer, Map<String, Object>> getEvents() {
