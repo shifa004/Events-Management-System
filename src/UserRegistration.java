@@ -95,7 +95,7 @@ public class UserRegistration {
         String hashedPassword = hashPassword(password, salt);
 
         Connection con = DBUtils.establishConnection();
-        String query = "INSERT INTO users (username, password, salt, first_name, last_name) values (?, ?, ?, ?, ? );";
+        String query = "INSERT INTO users (username, password, salt, firstname, lastname) values (?, ?, ?, ?, ? );";
         PreparedStatement statement = null;
         
         try {
