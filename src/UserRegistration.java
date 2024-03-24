@@ -1,4 +1,10 @@
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.sql.*;
+import java.util.Base64;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 // import javafx.geometry.Insets;
@@ -28,10 +34,10 @@ public class UserRegistration {
     public void initializeComponents() {
         VBox registerLayout = new VBox(10);
         registerLayout.getStyleClass().add("register-layout");
-        Button registerButton = new Button("Sign Up");
+        Button registerButton = new Button("Register");
         registerButton.getStyleClass().add("register-button");
 
-        Button loginButton = new Button("Sign In");
+        Button loginButton = new Button("Login");
         loginButton.getStyleClass().add("signin-button");        
 
         registerButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -55,14 +61,15 @@ public class UserRegistration {
                 createLabelWithStyle("First Name:"), firstNameField, 
                 createLabelWithStyle("Last Name"), lastNameField,
                 registerButton,
-                createLabelWithStyle("Already have an account?"),
+                new Label("Already have an account?"),
                 loginButton);
 
 
-        registerScene = new Scene(registerLayout, 300, 450);
+        registerScene = new Scene(registerLayout, 450, 500);
         registerScene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         stage.setTitle("User Registration");
         stage.setScene(registerScene);
+        stage.setHeight(450);
         stage.show();
     }
 
@@ -79,22 +86,33 @@ public class UserRegistration {
         String firstName = firstNameField.getText();
         String lastName = lastNameField.getText();
 
+        //Generate a random salt for the password
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[16];
+        random.nextBytes(salt);
+
+        // Hash password with salt
+        String hashedPassword = hashPassword(password, salt);
+
         Connection con = DBUtils.establishConnection();
-        String query = "insert into users values (?, ?,?, ? );";
+        String query = "INSERT INTO users (username, password, salt, firstname, lastname) values (?, ?, ?, ?, ? );";
         PreparedStatement statement = null;
         
         try {
             statement = con.prepareStatement(query);
             statement.setString(1, username);
-            statement.setString(2, password);
-            statement.setString(3, firstName);
-            statement.setString(4, lastName);
-
+            statement.setString(2, hashedPassword);
+            statement.setBytes(3, salt);
+            statement.setString(4, firstName);
+            statement.setString(5, lastName);
+            
             int rs = statement.executeUpdate();
             
             if (rs==1) {
-                UserChangePassword changePassword = new UserChangePassword(stage, username);
-                changePassword.initializeComponents();
+                // UserDashboard dashboard = new UserDashboard(stage, username);
+                // dashboard.initializeComponents();
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
             } else {
                 showAlert("Authentication Failed", "Invalid username or password.");
             }
@@ -102,6 +120,20 @@ public class UserRegistration {
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Database Error", "Failed to connect to the database.");
+        }
+    }
+
+    private String hashPassword(String password, byte[] salt) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            md.update(salt);
+            String passwordToHash = password + Base64.getEncoder().encodeToString(salt);
+            byte[] hashedPassword = md.digest(passwordToHash.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(hashedPassword);
+        } catch (NoSuchAlgorithmException e) {
+            //This handles any hashing errors
+            e.printStackTrace();
+            return null;
         }
     }
 

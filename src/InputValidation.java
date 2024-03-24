@@ -3,41 +3,40 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class InputValidation {
-
-    public static void main(String[] args) {
-        try (Scanner inputReader = new Scanner(System.in)) {
-            System.out.println("Enter email address: ");
-            // Read user input
-            String email = inputReader.nextLine();
-            // Define the regular expression for valid email, it can only contain
-            // letters, digits, underscores, hyphens, or dots in the username
-            // followed by the @, followed by a domain name which can only contain
-            // letters, digits, underscores, or hyphens, followed by the TLD
-            // which can only contain letters, digits, underscores, or hyphens.
-            // The TLD must have a length between 2 and 4 characters
-            String regex = "^[\\w-\\.]+@([\\w-]+\\.)?[\\w-]{2,63}$";
+    // public static void main(String[] args) {
+    //     try (Scanner inputReader = new Scanner(System.in)) {
+    //         System.out.println("Enter email address: ");
+    //         // Read user input
+    //         String email = inputReader.nextLine();
+    //         // Define the regular expression for valid email, it can only contain
+    //         // letters, digits, underscores, hyphens, or dots in the username
+    //         // followed by the @, followed by a domain name which can only contain
+    //         // letters, digits, underscores, or hyphens, followed by the TLD
+    //         // which can only contain letters, digits, underscores, or hyphens.
+    //         // The TLD must have a length between 2 and 4 characters
+    //         String regex = "^[\\w-\\.]+@([\\w-]+\\.)?[\\w-]{2,63}$";
             
-            // Compile the regex into a pattern
-            Pattern pattern = Pattern.compile(regex);
+    //         // Compile the regex into a pattern
+    //         Pattern pattern = Pattern.compile(regex);
 
-            // Match the given email against the pattern
-            Matcher matcher = pattern.matcher(email);
-            // validation
-            if (matcher.matches()) {
-                System.out.println("Email address is valid");
-            }else{
-                System.out.println("Invalid email");
-            }
-        }
+    //         // Match the given email against the pattern
+    //         Matcher matcher = pattern.matcher(email);
+    //         // validation
+    //         if (matcher.matches()) {
+    //             System.out.println("Email address is valid");
+    //         }else{
+    //             System.out.println("Invalid email");
+    //         }
+    //     }
 
         // checkUsername();
         // checkCreditCardNumber();
         // checkPhoneNumber();
         // checkDate();
         // checkInputString();
-    }
+    // }
 
-    public void checkUsername(String username){
+    public boolean checkUsername(String username){
         String regex = "[a-z-_]{2,10}";
 
         // Compile the regex into a pattern
@@ -47,9 +46,10 @@ public class InputValidation {
         Matcher matcher = pattern.matcher(username);
         // validation
         if (matcher.matches()) {
-            System.out.println("Username is valid");
-        }else{
-            System.out.println("Invalid username");
+            return true;
+        }
+        else {
+            return false;
         }
     }
 

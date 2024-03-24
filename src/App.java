@@ -8,6 +8,10 @@ public class App extends Application {
         //this.primaryStage = primaryStage;
         UserLogin login = new UserLogin(primaryStage);
         login.initializeComponents();
+        // String user = "";
+        // UserDashboard dash = new UserDashboard(primaryStage, user);
+        // dash.initializeComponents();
+
     }
 
     public static void main(String[] args) {

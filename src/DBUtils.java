@@ -1,9 +1,9 @@
 import java.sql.*;
 
 public class DBUtils {
-    private static String url = "jdbc:mysql://localhost:3306/events_management";
+    private static String url = "jdbc:mysql://localhost:3306/events";
     private static String appUsername = "admin";
-    private static String appPassword = "L.CNWP4ZvxFEaL7v";
+    private static String appPassword = ")G)PjeB3/HtNNAf*";
 
     public static Connection establishConnection(){
         Connection con = null;

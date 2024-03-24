@@ -8,7 +8,12 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class UserChangePassword {
@@ -22,32 +27,49 @@ public class UserChangePassword {
         this.username = username;
     }
 
+    @SuppressWarnings("static-access")
     public void initializeComponents() {
-        VBox changePasswordLayout = new VBox(10);
-        changePasswordLayout.setPadding(new Insets(10));
         Button changePasswordButton = new Button("Change Password");
-        Button logoutButton = new Button("Logout");
+        Button cancel = new Button("Cancel");
         changePasswordButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event){
-                //changePassword();
                 changePassword();
             }
         });
 
-        logoutButton.setOnAction(new EventHandler<ActionEvent>() {
+        cancel.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event){
-                UserLogin userLogin = new UserLogin(stage);
-                userLogin.initializeComponents();
+                UserProfile profile = new UserProfile(stage, username);
+                profile.initializeComponents();
             }
         });
 
-        changePasswordLayout.getChildren().addAll(new Label("Welcome " + username), new Label("New Password:"), newPasswordField, changePasswordButton, logoutButton);
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(20));
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
 
-        changePasswordScene = new Scene(changePasswordLayout, 300, 200);
+        Text heading = new Text("Change Password");
+        gridPane.add(heading, 0, 0);
+        heading.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        
+        gridPane.add( new Label("New Password:"), 0, 1);
+        gridPane.add(newPasswordField, 0, 2);
+
+        HBox buttons = new HBox();
+        buttons.getChildren().addAll(cancel, changePasswordButton);
+        buttons.setSpacing(10);
+        buttons.setMargin(cancel, new Insets(0, 0, 0, 20));
+
+        VBox all = new VBox();
+        all.getChildren().addAll(gridPane, buttons);
+        changePasswordScene = new Scene(all, 300, 200);
         stage.setTitle("Change Password");
         stage.setScene(changePasswordScene);
+        stage.hide();
+        stage.setMaximized(true);
         stage.show();
     }
 

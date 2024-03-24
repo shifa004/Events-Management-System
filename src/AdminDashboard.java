@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -31,28 +32,37 @@ public class AdminDashboard {
         adminLayout.setPadding(new Insets(10));
         adminLayout.setStyle("-fx-background-color: #ffffff;");
 
+        HBox topButtons = new HBox(10);
         Button Add = new Button("Add Event");
-                Add.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        AddStage();
-                    }
-                });
+        Add.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                AddStage();
+            }
+        });
 
+        Button logoutButton = new Button("Logout");
+        logoutButton.setOnAction(event -> {
+            UserLogin login = new UserLogin(stage);
+            login.initializeComponents();
+        });
+
+        topButtons.getChildren().addAll(Add, logoutButton);
+        topButtons.setSpacing(10);
+        
         Label allEventsLabel = new Label("All Events:");
         allEventsLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
-        adminLayout.getChildren().add(Add);
 
+        adminLayout.getChildren().add(topButtons);
         adminLayout.getChildren().add(allEventsLabel);
 
         adminLayout.getChildren().add(getAllEventsPane());
-
-
 
         AdminScene = new Scene(adminLayout, 600, 400);
         stage.setTitle("Admin Dashboard");
         stage.setScene(AdminScene);
 
+        stage.hide();
         stage.setMaximized(true);
         stage.show();
     }
@@ -65,15 +75,17 @@ public class AdminDashboard {
         alert.showAndWait();
     }
 
-    private VBox getAllEventsPane() {
+    private ScrollPane getAllEventsPane() {
         VBox eventsPane = new VBox(10);
 
         // Customize the styling as needed
         eventsPane.setStyle("-fx-background-color: #ffffff; -fx-padding: 10px;");
 
+        ScrollPane scrollPane = new ScrollPane();
+        
         // Retrieve events and add labels to the VBox
         Connection con = DBUtils.establishConnection();
-        String query = "SELECT * FROM events";
+        String query = "SELECT * FROM events where archive=false";
         try (Statement statement = con.createStatement();
                 ResultSet rs = statement.executeQuery(query)) {
 
@@ -135,31 +147,34 @@ public class AdminDashboard {
                 imageLabel.setStyle("-fx-font-weight: bold;");
                 categoryLabel.setStyle("-fx-font-weight: bold;");
 
-                HBox combo1 = new HBox();
+               HBox combo1 = new HBox();
                 combo1.getChildren().addAll(nameLabel, nameValue);
 
                 HBox combo2 = new HBox();
                 combo2.getChildren().addAll(descriptionLabel, descriptionValue);
 
                 HBox combo3 = new HBox();
-                combo2.getChildren().addAll(dateLabel, dateValue);
+                combo3.getChildren().addAll(dateLabel, dateValue);
 
                 HBox combo4 = new HBox();
-                combo2.getChildren().addAll(timeLabel, timeValue);
+                combo4.getChildren().addAll(timeLabel, timeValue);
 
                 HBox combo5 = new HBox();
-                combo2.getChildren().addAll(locationLabel, locationValue);
+                combo5.getChildren().addAll(locationLabel, locationValue);
 
                 HBox combo6 = new HBox();
-                combo2.getChildren().addAll(imageLabel, imageValue);
+                combo6.getChildren().addAll(imageLabel, imageValue);
 
                 HBox combo7 = new HBox();
-                combo2.getChildren().addAll(categoryLabel, categoryValue);
-
+                combo7.getChildren().addAll(categoryLabel, categoryValue);
+                
                 eventBox.getChildren().addAll(combo1, combo2, combo3, combo4, combo5, combo6, combo7, buttonBox);
 
                 eventsPane.getChildren().add(eventBox);
             }
+
+            scrollPane.setContent(eventsPane);
+            scrollPane.setFitToWidth(true); // To ensure the width of VBox is matched with ScrollPane
 
             DBUtils.closeConnection(con, statement);
 
@@ -168,7 +183,7 @@ public class AdminDashboard {
             showAlert("Database Error", "Failed to retrieve events from the database.");
         }
 
-        return eventsPane;
+        return scrollPane;
     }
 
     public void AddStage() {
@@ -231,9 +246,11 @@ public class AdminDashboard {
                 addButton);
 
                 Scene addscene = new Scene(addEventLayout,600,400);
+                stage.hide();
                 stage.setMaximized(true);
                 // Set the new scene on the existing stage
                 stage.setScene(addscene);
+                stage.show();
     }
 
     private void EditStage(Integer id, String name, String description, String date, String time, String location, String image, String category) {
@@ -295,9 +312,11 @@ public class AdminDashboard {
                 saveButton);
 
         Scene editScene = new Scene(editLayout, 600, 400);
+        stage.hide();
         stage.setMaximized(true);
         // Set the new scene on the existing stage
         stage.setScene(editScene);
+        stage.show();
     }
 
     private void addEventToDatabase(String name, String description, String date, String time, String location, String image, String category) {
@@ -354,8 +373,6 @@ public class AdminDashboard {
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert("Database Error", "Failed to update event details.");
-        } finally {
-            //
         }
     }
     public void archiveEvent(Integer id) {
