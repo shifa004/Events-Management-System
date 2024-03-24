@@ -64,9 +64,8 @@ public class UserLogin {
 
         loginLayout.getChildren().addAll(usernameLabel, usernameField,
                 passwordLabel, passwordField,
-                loginButton);
-
-        loginLayout.getChildren().addAll(new Label("Don't have an account?"), signUpButton);
+                loginButton,
+                new Label("Don't have an account?"), signUpButton);
 
         //Adding layout to the scene
         loginScene = new Scene(loginLayout, 300, 300);        
@@ -147,5 +146,4 @@ public class UserLogin {
             return null;
         }
     }
-
 }
