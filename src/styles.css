@@ -1,0 +1,171 @@
+.root {
+    -fx-background-color: #f4f4f4;
+    background-color: #f4f4f4;
+}
+
+.register-layout {
+    -fx-background-color: white;
+    background-color: white;
+    -fx-border-color: #ccc;
+    border-color: #ccc;
+    -fx-border-width: 1px;
+    border-width: 1px;
+    -fx-border-radius: 5px;
+    border-radius: 5px;
+    -fx-padding: 20px;
+    padding: 20px;
+    -fx-spacing: 10px;
+}
+
+.register-label {
+    -fx-font-size: 14px;
+    font-size: 14px;
+    -fx-font-weight: bold;
+    font-weight: bold;
+}
+
+.register-field {
+    -fx-pref-width: 200px;
+}
+
+.register-button {
+    -fx-background-color: #4CAF50; /* Green */
+    background-color: #4CAF50;
+    -fx-border: none;
+    border: none;
+    -fx-color: white;
+    color: wheat;
+    -fx-text-fill: white;
+    -fx-padding: 10px 20px;
+    padding: 10px 20px;
+    -fx-font-size: 14px;
+    font-size: 14px;
+    -fx-cursor: hand;
+    cursor: hand;
+}
+
+.register-button:hover {
+    -fx-background-color: #45a049; /* Darker Green */
+    background-color: #45a049;
+}
+
+.signin-button {
+    -fx-padding: 8px 16px;
+    padding: 8px 16px;
+    -fx-font-size: 14px;
+    font-size: 14px;
+    -fx-background-color: #008CBA; /* Blue */
+    background-color: #008CBA;
+    -fx-text-fill: white;
+    -fx-border-radius: 5px;
+    border-radius: 5px;
+    -fx-border-color: transparent;
+    border-color: transparent;
+}
+
+.login-layout {
+    -fx-background-color: white;
+    background-color: white;
+    -fx-padding: 20px;
+    padding: 20px;
+}
+
+.login-title {
+    -fx-font-size: 20px;
+    font-size: 20px;
+    -fx-font-weight: bold;
+    font-weight: bold;
+    -fx-padding: 10px 0px;
+    padding: 10px 0px;
+}
+
+.login-label {
+    -fx-font-size: 14px;
+    font-size: 14px;
+    -fx-padding: 5px 0px;
+    padding: 5px 0px;
+}
+
+.login-input {
+    -fx-padding: 5px;
+    padding: 5px;
+    -fx-pref-width: 200px;
+    -fx-font-size: 14px;
+    font-size: 14px;
+}
+
+.login-button {
+    -fx-padding: 8px 16px;
+    padding: 8px 16px;
+    -fx-font-size: 14px;
+    font-size: 14px;
+    -fx-background-color: #4CAF50; /* Green */
+    background-color: #45a049;
+    -fx-text-fill: white;
+    -fx-border-radius: 5px;
+    border-radius:5px;
+    -fx-border-color: transparent;
+    border-color: transparent;
+}
+
+.login-button:hover {
+    -fx-background-color: #45a049; /* Darker Green */
+    background-color: #45a049;
+}
+
+.signup-button {
+    -fx-padding: 8px 16px;
+    padding: 8px 16px;
+    -fx-font-size: 14px;
+    font-size: 14px;
+    -fx-background-color: #008CBA; /* Blue */
+    background-color: #008CBA;
+    -fx-text-fill: white;
+    -fx-border-radius: 5px;
+    border-radius: 5px;
+    -fx-border-color: transparent;
+    border-color: transparent;
+}
+
+.signup-button:hover {
+    -fx-background-color: #0077a3; /* Darker Blue */
+    background-color: #0077a3;
+}
+
+.search-field {
+    -fx-prompt-text-fill: gray;
+    -fx-padding: 5px 10px; /* Adjust padding values as needed */
+    padding: 5px 10px;
+    -fx-pref-width: 250px;
+}
+
+.menu-button {
+    -fx-background-color: transparent; /* Transparent background */
+    background-color: transparent;
+    -fx-border-width: 0 0 2 0; /* Bottom border only */
+    border-width:  0 0 2 0 ;
+    -fx-border-color: transparent;
+    border-color: transparent;
+    -fx-font-size: 16px;
+    font-size: 16px;
+    -fx-text-fill: #000000; /* Black text color */
+    -fx-padding: 5 10; /* Padding around the text */
+    padding: 5 10;
+    -fx-cursor: hand; /* Cursor style */
+    cursor: hand;
+}
+
+.menu-button:hover {
+    -fx-background-color: #f0f0f0; /* Light gray background on hover */
+    background-color: #f0f0f0;
+}
+
+.menu-button:pressed {
+    -fx-background-color: #d9d9d9; /* Slightly darker background when pressed */
+    background-color: #d9d9d9;
+}
+
+.menu-button:last-child {
+    -fx-border-width: 0; /* Remove border from the last button */
+    border-width: 0;
+}
