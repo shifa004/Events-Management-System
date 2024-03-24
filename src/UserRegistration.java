@@ -34,10 +34,10 @@ public class UserRegistration {
     public void initializeComponents() {
         VBox registerLayout = new VBox(10);
         registerLayout.getStyleClass().add("register-layout");
-        Button registerButton = new Button("Sign Up");
+        Button registerButton = new Button("Register");
         registerButton.getStyleClass().add("register-button");
 
-        Button loginButton = new Button("Sign In");
+        Button loginButton = new Button("Login");
         loginButton.getStyleClass().add("signin-button");        
 
         registerButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -61,7 +61,7 @@ public class UserRegistration {
                 createLabelWithStyle("First Name:"), firstNameField, 
                 createLabelWithStyle("Last Name"), lastNameField,
                 registerButton,
-                createLabelWithStyle("Already have an account?"),
+                new Label("Already have an account?"),
                 loginButton);
 
 
@@ -69,6 +69,7 @@ public class UserRegistration {
         registerScene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         stage.setTitle("User Registration");
         stage.setScene(registerScene);
+        stage.setHeight(450);
         stage.show();
     }
 
