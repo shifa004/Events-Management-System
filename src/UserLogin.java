@@ -1,4 +1,9 @@
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
+import java.util.Base64;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 //import javafx.geometry.Insets;
@@ -15,6 +20,7 @@ public class UserLogin {
     private Scene loginScene;
     private TextField usernameField = new TextField();
     private PasswordField passwordField = new PasswordField();
+    InputValidation inputValidation= new InputValidation(); 
 
     private Stage stage;
 
@@ -28,10 +34,10 @@ public class UserLogin {
         loginLayout.getStyleClass().add("login-layout");
 
         //Controls
-        Button loginButton = new Button("Sign In");
+        Button loginButton = new Button("Login");
         loginButton.getStyleClass().add("login-button");
 
-        Button signUpButton = new Button("Sign Up");
+        Button signUpButton = new Button("Register");
         signUpButton.getStyleClass().add("signup-button");
         
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -58,9 +64,8 @@ public class UserLogin {
 
         loginLayout.getChildren().addAll(usernameLabel, usernameField,
                 passwordLabel, passwordField,
-                loginButton);
-
-        loginLayout.getChildren().addAll(new Label("or"), signUpButton);
+                loginButton,
+                new Label("Don't have an account?"), signUpButton);
 
         //Adding layout to the scene
         loginScene = new Scene(loginLayout, 300, 300);        
@@ -68,6 +73,9 @@ public class UserLogin {
 
         //Add scene to stage
         stage.setScene(loginScene);
+        stage.setWidth(300);
+        stage.setHeight(350);
+        stage.centerOnScreen();
         stage.show();
 
         loginScene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
@@ -76,27 +84,40 @@ public class UserLogin {
     private void authenticate() {
         String username = usernameField.getText();
         String password = passwordField.getText();
+
         Connection con = DBUtils.establishConnection();
-        String query = "SELECT * FROM users WHERE username=? AND password=?;";
+        String query = "SELECT * FROM users WHERE username=?";
         
         try {
             PreparedStatement statement = con.prepareStatement(query);
             statement.setString(1, username);
-            statement.setString(2, password);
             ResultSet rs = statement.executeQuery();
             
-           if (rs.next()) {
+            if (rs.next()) {
                 String user = rs.getString("username");
-                if (user.matches("admin")) {
-                // Redirect to admin dashboard
-                AdminDashboard adminDashboard = new AdminDashboard(stage);
-                adminDashboard.initializeComponents();
-            } else {
-                UserDashboard dashboard = new UserDashboard(stage, username);
-                dashboard.initializeComponents();}
-            } else {
-                showAlert("Authentication Failed", "Invalid username or password.");
-            }
+                String storedHashedPassword = rs.getString("password");
+                byte[] storedSalt = rs.getBytes("salt");
+
+                String hashInput = hashPassword(password, storedSalt);
+
+                if (storedHashedPassword.equals(hashInput) && inputValidation.checkUsername(username)){                    
+                    if (user.equals("admin")) {
+                        // Redirect to admin dashboard
+                        AdminDashboard adminDashboard = new AdminDashboard(stage);
+                        adminDashboard.initializeComponents();
+                    }
+                    else {
+                        UserDashboard dashboard = new UserDashboard(stage, username);
+                        dashboard.initializeComponents();}
+                    } 
+                    else {
+                        showAlert("Authentication Failed", "Invalid username or password.");
+                    }
+                }    
+                else {
+                    showAlert("Authentication Failed", "Invalid username or password.");
+                }          
+            
             DBUtils.closeConnection(con, statement);
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,5 +131,19 @@ public class UserLogin {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private String hashPassword(String password, byte[] salt) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            md.update(salt);
+            String passwordToHash = password + Base64.getEncoder().encodeToString(salt);
+            byte[] hashedPassword = md.digest(passwordToHash.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(hashedPassword);
+        } catch (NoSuchAlgorithmException e) {
+            //This handles any hashing errors
+            e.printStackTrace();
+            return null;
+        }
     }
 }
