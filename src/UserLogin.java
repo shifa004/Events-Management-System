@@ -20,6 +20,7 @@ public class UserLogin {
     private Scene loginScene;
     private TextField usernameField = new TextField();
     private PasswordField passwordField = new PasswordField();
+    InputValidation inputValidation= new InputValidation(); 
 
     private Stage stage;
 
@@ -94,14 +95,14 @@ public class UserLogin {
             ResultSet rs = statement.executeQuery();
             
             if (rs.next()) {
+                String user = rs.getString("username");
                 String storedHashedPassword = rs.getString("password");
                 byte[] storedSalt = rs.getBytes("salt");
 
                 String hashInput = hashPassword(password, storedSalt);
 
-                if (storedHashedPassword.equals(hashInput)){
-                    String user = rs.getString("username");
-                    if (user.matches("admin")) {
+                if (storedHashedPassword.equals(hashInput) && inputValidation.checkUsername(username)){                    
+                    if (user.equals("admin")) {
                         // Redirect to admin dashboard
                         AdminDashboard adminDashboard = new AdminDashboard(stage);
                         adminDashboard.initializeComponents();
