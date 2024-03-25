@@ -24,6 +24,9 @@ public class UserLogin {
     private PasswordField passwordField = new PasswordField();
     InputValidation inputValidation= new InputValidation(); 
 
+    Label usernameErrorLabel = new Label();
+    Label passwordErrorLabel = new Label();
+
     private static final int maxAttempts = 5;
     private static final long resetTime = TimeUnit.MINUTES.toMillis(5);
     
@@ -70,8 +73,11 @@ public class UserLogin {
         Label passwordLabel = new Label("Password:");
         passwordLabel.getStyleClass().add("login-label");
 
-        loginLayout.getChildren().addAll(usernameLabel, usernameField,
-                passwordLabel, passwordField,
+        usernameErrorLabel.setStyle("-fx-text-fill: red;");
+        passwordErrorLabel.setStyle("-fx-text-fill: red;");
+
+        loginLayout.getChildren().addAll(usernameLabel, usernameField, usernameErrorLabel,
+                passwordLabel, passwordField, passwordErrorLabel,
                 loginButton,
                 new Label("Don't have an account?"), signUpButton);
 
@@ -82,7 +88,7 @@ public class UserLogin {
         //Add scene to stage
         stage.setScene(loginScene);
         stage.setWidth(300);
-        stage.setHeight(350);
+        stage.setHeight(400);
         stage.centerOnScreen();
         stage.show();
 
@@ -93,6 +99,25 @@ public class UserLogin {
     private void authenticate() {
         String username = usernameField.getText();
         String password = passwordField.getText();
+
+        //Input Validation
+        Boolean valid = true;
+        if (!InputValidation.checkUsername(username)) {
+            usernameErrorLabel.setText("Invalid username.");
+            valid = false;
+        } else {
+            usernameErrorLabel.setText("");
+        }
+        if (!InputValidation.checkPassword(password)) {
+            passwordErrorLabel.setText("Invalid password");
+            valid = false;
+        } else {
+            passwordErrorLabel.setText("");
+        }
+        if(!valid){
+            return;
+        }
+
         //Check user login attempts
         if (!canAttemptLogin(username)) {
             showAlert("Login Blocked", "Too many failed attempts. Please try again later.");
