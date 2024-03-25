@@ -207,10 +207,10 @@ public class UserLogin {
             return attempts;
         }
     
-        public void reset() {
-            this.attempts = 1;
-            this.lastAttemptTimestamp = System.currentTimeMillis();
-        }
+        // public void reset() {
+        //     this.attempts = 1;
+        //     this.lastAttemptTimestamp = System.currentTimeMillis();
+        // }
     }
     
 }
