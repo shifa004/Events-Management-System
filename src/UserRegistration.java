@@ -23,7 +23,7 @@ public class UserRegistration {
     private PasswordField passwordField = new PasswordField();
     private TextField firstNameField = new TextField();
     private TextField lastNameField = new TextField();
-    InputValidation inputValidation= new InputValidation();
+    InputValidation inputValidation = new InputValidation();
 
     private Stage stage;
 
@@ -38,14 +38,7 @@ public class UserRegistration {
         registerButton.getStyleClass().add("register-button");
 
         Button loginButton = new Button("Login");
-        loginButton.getStyleClass().add("signin-button");        
-
-        registerButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                addUser();
-            }
-        });
+        loginButton.getStyleClass().add("signin-button");
 
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -54,17 +47,64 @@ public class UserRegistration {
                 userLogin.initializeComponents();
             }
         });
-
+        Label usernameErrorLabel = new Label();
+        Label passwordErrorLabel = new Label();
+        Label firstnameErrorLabel = new Label();
+        Label lastnameErrorLabel = new Label();
+        // css
+        usernameErrorLabel.setStyle("-fx-text-fill: red;");
+        passwordErrorLabel.setStyle("-fx-text-fill: red;");
+        firstnameErrorLabel.setStyle("-fx-text-fill: red;");
+        lastnameErrorLabel.setStyle("-fx-text-fill: red;");
         registerLayout.getChildren().addAll(
-                createLabelWithStyle("Username:"), usernameField,
-                createLabelWithStyle("Password:"), passwordField, 
-                createLabelWithStyle("First Name:"), firstNameField, 
-                createLabelWithStyle("Last Name"), lastNameField,
+                createLabelWithStyle("Username:"), usernameField, usernameErrorLabel,
+                createLabelWithStyle("Password:"), passwordField, passwordErrorLabel,
+                createLabelWithStyle("First Name:"), firstNameField, firstnameErrorLabel,
+                createLabelWithStyle("Last Name"), lastNameField, lastnameErrorLabel,
                 registerButton,
                 new Label("Already have an account?"),
                 loginButton);
 
+        registerButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                String username = usernameField.getText();
 
+                String password = passwordField.getText();
+                String firstName = firstNameField.getText();
+                String lastName = lastNameField.getText();
+                Boolean valid = true;
+
+                if (!InputValidation.checkUsername(username)) {
+                    usernameErrorLabel.setText("Invalid username.");
+                    valid = false;
+                } else {
+                    usernameErrorLabel.setText("");
+                }
+                if (!InputValidation.checkPassword(password)) {
+                    passwordErrorLabel.setText("Invalid password");
+                    valid = false;
+                } else {
+                    passwordErrorLabel.setText("");
+                }
+                if (!InputValidation.checkFirstName(firstName)) {
+                    firstnameErrorLabel.setText("Field cannot be empty.");
+                    valid = false;
+                } else {
+                    firstnameErrorLabel.setText("");
+                }
+                if (!InputValidation.checkLastName(lastName)) {
+                    lastnameErrorLabel.setText("Field cannot be empty.");
+                    valid = false;
+                } else {
+                    lastnameErrorLabel.setText("");
+                }
+                if(!valid){
+                    return;
+                }
+                addUser(username,password,firstName,lastName);
+            }
+        });
         registerScene = new Scene(registerLayout, 450, 500);
         registerScene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         stage.setTitle("User Registration");
@@ -79,14 +119,10 @@ public class UserRegistration {
         return label;
     }
 
-    private void addUser() {
-        String username = usernameField.getText();
-        inputValidation.checkUsername(username);
-        String password = passwordField.getText();
-        String firstName = firstNameField.getText();
-        String lastName = lastNameField.getText();
+    private void addUser(String username, String password, String firstName, String lastName) {
+        
 
-        //Generate a random salt for the password
+        // Generate a random salt for the password
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
         random.nextBytes(salt);
@@ -97,7 +133,7 @@ public class UserRegistration {
         Connection con = DBUtils.establishConnection();
         String query = "INSERT INTO users (username, password, salt, firstname, lastname) values (?, ?, ?, ?, ? );";
         PreparedStatement statement = null;
-        
+
         try {
             statement = con.prepareStatement(query);
             statement.setString(1, username);
@@ -105,10 +141,10 @@ public class UserRegistration {
             statement.setBytes(3, salt);
             statement.setString(4, firstName);
             statement.setString(5, lastName);
-            
+
             int rs = statement.executeUpdate();
-            
-            if (rs==1) {
+
+            if (rs == 1) {
                 // UserDashboard dashboard = new UserDashboard(stage, username);
                 // dashboard.initializeComponents();
                 UserLogin login = new UserLogin(stage);
@@ -131,7 +167,7 @@ public class UserRegistration {
             byte[] hashedPassword = md.digest(passwordToHash.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(hashedPassword);
         } catch (NoSuchAlgorithmException e) {
-            //This handles any hashing errors
+            // This handles any hashing errors
             e.printStackTrace();
             return null;
         }

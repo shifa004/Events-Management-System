@@ -36,8 +36,63 @@ public class InputValidation {
         // checkInputString();
     // }
 
-    public boolean checkUsername(String username){
-        String regex = "[a-z-_]{2,10}";
+    
+    public static boolean checkFirstName(String name){
+        String regex = ".*[a-zA-Z]+.*";
+
+
+        // Compile the regex into a pattern
+        Pattern pattern = Pattern.compile(regex);
+
+        // Match the given email against the pattern
+        Matcher matcher = pattern.matcher(name);
+        // validation
+        if (matcher.matches()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    public static boolean checkLastName(String name){
+        String regex = ".*[a-zA-Z]+.*";
+
+
+        // Compile the regex into a pattern
+        Pattern pattern = Pattern.compile(regex);
+
+        // Match the given email against the pattern
+        Matcher matcher = pattern.matcher(name);
+        // validation
+        if (matcher.matches()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+
+    public static boolean checkPassword(String password){
+        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&()-_=+\\[\\]{}|;:'\",.<>?]{8,}$";
+
+        // Compile the regex into a pattern
+        Pattern pattern = Pattern.compile(regex);
+
+        // Match the given email against the pattern
+        Matcher matcher = pattern.matcher(password);
+        // validation
+        if (matcher.matches()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+
+    public static boolean checkUsername(String username){
+        String regex = "[a-z-_]{5,20}";
 
         // Compile the regex into a pattern
         Pattern pattern = Pattern.compile(regex);
@@ -52,7 +107,87 @@ public class InputValidation {
             return false;
         }
     }
+    // public void checkUsername(String username){
+    //     String regex = "[a-z-_]{2,10}";
+    //     Pattern pattern = Pattern.compile(regex);
+    //     Matcher matcher = pattern.matcher(username);
+    //     if (matcher.matches()) {
+    //         System.out.println("Username is valid");
+    //     }else{
+    //         System.out.println("Invalid username");
+    //     }
+    // }
 
+    public static Boolean checkEventName(String name){
+        String regex = "^[a-zA-Z0-9!,&.()*\\s]+$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(name);
+        if (matcher.matches()) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public static Boolean checkEventDescription(String description){
+        String regex = "^.{1,1000}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(description);
+        if (matcher.matches()) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public static Boolean checkEventDate(String date){
+        String regex = "^\\d{1,2}\\s(?:January|February|March|April|May|June|July|August|September|October|November|December)\\s\\d{4}\\s-\\s\\d{1,2}\\s(?:January|February|March|April|May|June|July|August|September|October|November|December)\\s\\d{4}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(date);
+        if (matcher.matches()) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public static Boolean checkEventTime(String time){
+        String regex = "^(0[1-9]|1[0-2]):[0-5][0-9]\\s(?:am|pm)\\s-\\s(0[1-9]|1[0-2]):[0-5][0-9]\\s(?:am|pm)$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(time);
+        if (matcher.matches()) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public static Boolean checkEventLocation(String location){
+        String regex = "^[a-zA-Z0-9\s.,-]+$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(location);
+        if (matcher.matches()) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public static Boolean checkEventImage(String image){
+        String regex = "^https?:\\/\\/(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(?:\\/[^\\s]*)?(?:\\.png|\\.jpg|\\.jpeg|\\.gif|\\.bmp)$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(image);
+        if (matcher.matches()) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public static Boolean checkEventCategory(String category){
+        String regex = "^.{1,50}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(category);
+        if (matcher.matches()) {
+            return true;
+        }else{
+            return false;
+        }
+    }
     public static void checkCreditCardNumber(){
         try (Scanner inputReader = new Scanner(System.in)) {
             System.out.println("Enter credit card number: ");

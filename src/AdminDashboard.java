@@ -16,7 +16,7 @@ import javafx.scene.layout.HBox;
 
 public class AdminDashboard {
     VBox adminLayout = new VBox(10);
-
+    
     private Scene AdminScene;
     // private TextField usernameField = new TextField();
     // private PasswordField passwordField = new PasswordField();
@@ -185,8 +185,10 @@ public class AdminDashboard {
 
         return scrollPane;
     }
+    
 
     public void AddStage() {
+        
         VBox addEventLayout = new VBox(10);
         addEventLayout.setPadding(new Insets(10));
         addEventLayout.setStyle("-fx-background-color: #ffffff;");
@@ -209,6 +211,7 @@ public class AdminDashboard {
         categoryLabel.setStyle("-fx-font-weight: bold;");
 
         TextField eventNameField = new TextField();
+        eventNameField.getStyleClass().add("eventNameField");
         TextField eventDescriptionField = new TextField();
         TextField eventDateField = new TextField();
         TextField eventTimeField = new TextField();
@@ -216,7 +219,27 @@ public class AdminDashboard {
         TextField eventImageField = new TextField();
         TextField eventCategoryField = new TextField();
 
+        //errors 
+        Label nameErrorLabel = new Label();
+        Label descriptionErrorLabel = new Label();
+        Label dateErrorLabel = new Label();
+        Label timeErrorLabel = new Label();
+        Label locationErrorLabel = new Label();
+        Label imageErrorLabel = new Label();
+        Label categoryErrorLabel = new Label();
+        //css
+        nameErrorLabel.setStyle("-fx-text-fill: red;");
+        descriptionErrorLabel.setStyle("-fx-text-fill: red;");
+        dateErrorLabel.setStyle("-fx-text-fill: red;");
+        timeErrorLabel.setStyle("-fx-text-fill: red;");
+        locationErrorLabel.setStyle("-fx-text-fill: red;");
+        imageErrorLabel.setStyle("-fx-text-fill: red;");
+        categoryErrorLabel.setStyle("-fx-text-fill: red;");
+
+
+
         Button addButton = new Button("Add Event");
+        addButton.getStyleClass().add("login-button");
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -228,29 +251,84 @@ public class AdminDashboard {
                 String location = eventLocationField.getText();
                 String image = eventImageField.getText();
                 String category = eventCategoryField.getText();
-
-                addEventToDatabase(name, description, date, time, location, image, category);
+                Boolean valid = true;
+                if (!InputValidation.checkEventName(name)) {
+                    nameErrorLabel.setText("Invalid event name");
+                    valid = false;
+                } else {
+                    System.out.println("name" + valid);
+                    nameErrorLabel.setText("");
+                }
+                if (!InputValidation.checkEventDescription(description)) {
+                    descriptionErrorLabel.setText("Maximum limit exceeded (1000)");
+                    valid = false;
+                    System.out.println("desc" + valid);
+                } else {
+                    descriptionErrorLabel.setText("");
+                }
+                if (!InputValidation.checkEventDate(date)) {
+                    dateErrorLabel.setText("Invalid date format. Format: DD Month YYYY");
+                    valid = false;
+                } else {
+                    dateErrorLabel.setText("");
+                }
+                if (!InputValidation.checkEventTime(time)) {
+                    timeErrorLabel.setText("Invalid time format. Format: HH:MM am/pm");
+                    valid = false;
+                } else {
+                    timeErrorLabel.setText("");
+                }
+                if (!InputValidation.checkEventLocation(location)) {
+                    locationErrorLabel.setText("Invalid location format.");
+                    valid = false;
+                } else {
+                    locationErrorLabel.setText("");
+                }
+                if (!InputValidation.checkEventImage(image)) {
+                    imageErrorLabel.setText("Invalid image url.");
+                    valid = false;
+                } else {
+                    imageErrorLabel.setText("");
+                }
+                if (!InputValidation.checkEventCategory(category)) {
+                    categoryErrorLabel.setText("Exceeded max limit (50).");
+                    valid = false;
+                } else {
+                    categoryErrorLabel.setText("");
+                }
+                if(!valid){
+                    return;
+                }else{
+                    addEventToDatabase(name, description, date, time, location, image, category);
+                }
+               
                 initializeComponents();
             }
         });
 
         addEventLayout.getChildren().addAll(
                 new Label("Add Event:"),
-                namelabel, eventNameField,
-                desclabel, eventDescriptionField,
-                dateLabel, eventDateField,
-                timeLabel, eventTimeField,
-                locationLabel, eventLocationField,
-                imageLabel, eventImageField,
-                categoryLabel, eventCategoryField,
+                namelabel, eventNameField, nameErrorLabel,
+                desclabel, eventDescriptionField, descriptionErrorLabel,
+                dateLabel, eventDateField, dateErrorLabel,
+                timeLabel, eventTimeField, timeErrorLabel,
+                locationLabel, eventLocationField,locationErrorLabel,
+                imageLabel, eventImageField,imageErrorLabel,
+                categoryLabel, eventCategoryField, categoryErrorLabel,
                 addButton);
 
-                Scene addscene = new Scene(addEventLayout,600,400);
+                ScrollPane scrollPane = new ScrollPane();
+                scrollPane.setContent(addEventLayout);
+
+                scrollPane.setFitToWidth(true);
+
+                Scene addscene = new Scene(scrollPane,600,400);
                 stage.hide();
                 stage.setMaximized(true);
                 // Set the new scene on the existing stage
                 stage.setScene(addscene);
                 stage.show();
+                addscene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
     }
 
     private void EditStage(Integer id, String name, String description, String date, String time, String location, String image, String category) {
@@ -267,12 +345,75 @@ public class AdminDashboard {
         TextField locationField = new TextField(location);
         TextField imageField = new TextField(image);
         TextField categoryField = new TextField(category);
-
+        //errors 
+        Label nameErrorLabel = new Label();
+        Label descriptionErrorLabel = new Label();
+        Label dateErrorLabel = new Label();
+        Label timeErrorLabel = new Label();
+        Label locationErrorLabel = new Label();
+        Label imageErrorLabel = new Label();
+        Label categoryErrorLabel = new Label();
+        //css
+        nameErrorLabel.setStyle("-fx-text-fill: red;");
+        descriptionErrorLabel.setStyle("-fx-text-fill: red;");
+        dateErrorLabel.setStyle("-fx-text-fill: red;");
+        timeErrorLabel.setStyle("-fx-text-fill: red;");
+        locationErrorLabel.setStyle("-fx-text-fill: red;");
+        imageErrorLabel.setStyle("-fx-text-fill: red;");
+        categoryErrorLabel.setStyle("-fx-text-fill: red;");
         Button saveButton = new Button("Save");
         saveButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {                
-                updateEventDetails(id, 
+            public void handle(ActionEvent event) {    
+                Boolean valid = true;
+                if (!InputValidation.checkEventName(nameField.getText())) {
+                    nameErrorLabel.setText("Invalid event name");
+                    valid = false;
+                } else {
+                    System.out.println("name" + valid);
+                    nameErrorLabel.setText("");
+                }
+                if (!InputValidation.checkEventDescription(descriptionField.getText())) {
+                    descriptionErrorLabel.setText("Maximum limit exceeded (1000)");
+                    valid = false;
+                    System.out.println("desc" + valid);
+                } else {
+                    descriptionErrorLabel.setText("");
+                }
+                if (!InputValidation.checkEventDate(dateField.getText())) {
+                    dateErrorLabel.setText("Invalid date format. Format: DD Month YYYY");
+                    valid = false;
+                } else {
+                    dateErrorLabel.setText("");
+                }
+                if (!InputValidation.checkEventTime(timeField.getText())) {
+                    timeErrorLabel.setText("Invalid time format. Format: HH:MM am/pm");
+                    valid = false;
+                } else {
+                    timeErrorLabel.setText("");
+                }
+                if (!InputValidation.checkEventLocation(locationField.getText())) {
+                    locationErrorLabel.setText("Invalid location format.");
+                    valid = false;
+                } else {
+                    locationErrorLabel.setText("");
+                }
+                if (!InputValidation.checkEventImage(imageField.getText())) {
+                    imageErrorLabel.setText("Invalid image url.");
+                    valid = false;
+                } else {
+                    imageErrorLabel.setText("");
+                }
+                if (!InputValidation.checkEventCategory(categoryField.getText())) {
+                    categoryErrorLabel.setText("Exceeded max limit (50).");
+                    valid = false;
+                } else {
+                    categoryErrorLabel.setText("");
+                }
+                if(!valid){
+                    return;
+                }else{
+                    updateEventDetails(id, 
                 nameField.getText(), 
                 descriptionField.getText(),
                 dateField.getText(),
@@ -280,6 +421,8 @@ public class AdminDashboard {
                 locationField.getText(),
                 imageField.getText(),
                 categoryField.getText());
+                }            
+                
             }
         });
         Label header = new Label("Edit Event: ");
@@ -302,16 +445,23 @@ public class AdminDashboard {
 
         editLayout.getChildren().addAll(
                 header,
-                nameLabel, nameField,
-                descriptionLabel, descriptionField,
-                dateLabel, dateField,
-                timeLabel, timeField,
-                locationLabel, locationField,
-                imageLabel, imageField,
-                categoryLabel, categoryField,
+                nameLabel, nameField, nameErrorLabel,
+                descriptionLabel, descriptionField,descriptionErrorLabel,
+                dateLabel, dateField, dateErrorLabel,
+                timeLabel, timeField, timeErrorLabel,
+                locationLabel, locationField,locationErrorLabel,
+                imageLabel, imageField, imageErrorLabel,
+                categoryLabel, categoryField, categoryErrorLabel,
                 saveButton);
 
-        Scene editScene = new Scene(editLayout, 600, 400);
+
+
+
+                ScrollPane scrollPane = new ScrollPane();
+                scrollPane.setContent(editLayout);
+
+                scrollPane.setFitToWidth(true);
+        Scene editScene = new Scene(scrollPane, 600, 400);
         stage.hide();
         stage.setMaximized(true);
         // Set the new scene on the existing stage
