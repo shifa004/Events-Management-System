@@ -236,8 +236,6 @@ public class AdminDashboard {
         imageErrorLabel.setStyle("-fx-text-fill: red;");
         categoryErrorLabel.setStyle("-fx-text-fill: red;");
 
-
-
         Button addButton = new Button("Add Event");
         addButton.getStyleClass().add("login-button");
         addButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -454,13 +452,11 @@ public class AdminDashboard {
                 categoryLabel, categoryField, categoryErrorLabel,
                 saveButton);
 
-
-
-
                 ScrollPane scrollPane = new ScrollPane();
                 scrollPane.setContent(editLayout);
 
                 scrollPane.setFitToWidth(true);
+                
         Scene editScene = new Scene(scrollPane, 600, 400);
         stage.hide();
         stage.setMaximized(true);

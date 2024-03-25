@@ -3,6 +3,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.Base64;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -21,6 +23,12 @@ public class UserLogin {
     private TextField usernameField = new TextField();
     private PasswordField passwordField = new PasswordField();
     InputValidation inputValidation= new InputValidation(); 
+
+    private static final int maxAttempts = 5;
+    private static final long resetTime = TimeUnit.MINUTES.toMillis(5);
+    
+    // Tracks login attempts and their timestamps
+    private final ConcurrentHashMap<String, LoginAttempt> loginAttempts = new ConcurrentHashMap<>();
 
     private Stage stage;
 
@@ -81,9 +89,15 @@ public class UserLogin {
         loginScene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
     }
 
+    @SuppressWarnings("static-access")
     private void authenticate() {
         String username = usernameField.getText();
         String password = passwordField.getText();
+        //Check user login attempts
+        if (!canAttemptLogin(username)) {
+            showAlert("Login Blocked", "Too many failed attempts. Please try again later.");
+            return;
+        }
 
         Connection con = DBUtils.establishConnection();
         String query = "SELECT * FROM users WHERE username=?";
@@ -100,7 +114,8 @@ public class UserLogin {
 
                 String hashInput = hashPassword(password, storedSalt);
 
-                if (storedHashedPassword.equals(hashInput) && inputValidation.checkUsername(username)){                    
+                if (storedHashedPassword.equals(hashInput) && inputValidation.checkUsername(username)){
+                    loginAttempts.remove(username);                    
                     if (user.equals("admin")) {
                         // Redirect to admin dashboard
                         AdminDashboard adminDashboard = new AdminDashboard(stage);
@@ -112,6 +127,7 @@ public class UserLogin {
                     } 
                     else {
                         showAlert("Authentication Failed", "Invalid username or password.");
+                        recordFailedAttempt(username);
                     }
                 }    
                 else {
@@ -146,4 +162,55 @@ public class UserLogin {
             return null;
         }
     }
+
+    private boolean canAttemptLogin(String username) {
+        LoginAttempt attempt = loginAttempts.get(username);
+        if (attempt == null || attempt.canAttempt()) {
+            return true;
+        } else if (attempt.getAttempts() < maxAttempts) {
+            return true;
+        }
+        return false;
+    }
+    
+    private void recordFailedAttempt(String username) {
+        loginAttempts.compute(username, (k, v) -> {
+            if (v == null) {
+                return new LoginAttempt();
+            } else {
+                v.attempt();
+                return v;
+            }
+        });
+    }
+
+    private static class LoginAttempt {
+        private int attempts;
+        private long lastAttemptTimestamp;
+    
+        public LoginAttempt() {
+            this.attempts = 1;
+            this.lastAttemptTimestamp = System.currentTimeMillis();
+        }
+    
+        public void attempt() {
+            this.attempts++;
+            this.lastAttemptTimestamp = System.currentTimeMillis();
+        }
+    
+        public boolean canAttempt() {
+            long now = System.currentTimeMillis();
+            return now - lastAttemptTimestamp > resetTime;
+        }
+    
+        public int getAttempts() {
+            return attempts;
+        }
+    
+        public void reset() {
+            this.attempts = 1;
+            this.lastAttemptTimestamp = System.currentTimeMillis();
+        }
+    }
+    
 }

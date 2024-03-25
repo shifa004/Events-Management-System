@@ -7,7 +7,6 @@ import java.util.Base64;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-// import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -47,6 +46,7 @@ public class UserRegistration {
                 userLogin.initializeComponents();
             }
         });
+
         Label usernameErrorLabel = new Label();
         Label passwordErrorLabel = new Label();
         Label firstnameErrorLabel = new Label();
@@ -109,7 +109,8 @@ public class UserRegistration {
         registerScene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         stage.setTitle("User Registration");
         stage.setScene(registerScene);
-        stage.setHeight(450);
+        stage.setHeight(560);
+        stage.centerOnScreen();
         stage.show();
     }
 
@@ -120,7 +121,10 @@ public class UserRegistration {
     }
 
     private void addUser(String username, String password, String firstName, String lastName) {
-        
+        if (checkUsernameExists(username)) {
+            showAlert("Registration Failed", "Username already exists.");
+            return;
+        }
 
         // Generate a random salt for the password
         SecureRandom random = new SecureRandom();
@@ -171,6 +175,25 @@ public class UserRegistration {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private boolean checkUsernameExists(String username) {
+        Connection con = DBUtils.establishConnection();
+        String query = "SELECT * FROM users WHERE username = ?";
+        try {
+            PreparedStatement statement = con.prepareStatement(query);
+            statement.setString(1, username);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                // Username exists
+                DBUtils.closeConnection(con, statement);
+                return true;
+            }
+            DBUtils.closeConnection(con, statement);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private void showAlert(String title, String content) {
