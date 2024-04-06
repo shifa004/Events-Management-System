@@ -63,12 +63,26 @@ public class UserProfile {
 
         Button goBack = new Button("Go Back");
         goBack.setOnAction(e -> {
+            Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }
             UserDashboard dash = new UserDashboard(stage, username);
             dash.initializeComponents();
         });
         
         Button editButton = new Button("Edit Profile");
         editButton.setOnAction(e -> {
+            Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }
             EditProfile edit = new EditProfile(stage, username, firstName, lastName);
             edit.initializeComponents();
         });
