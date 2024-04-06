@@ -53,12 +53,59 @@ public class UserDashboard {
         Button communityButton = new Button("Community");
         Button othersButton = new Button("Others");
         
-        allEventsButton.setOnAction(event -> populateEvents("", null));
-        sportsButton.setOnAction(event -> populateEvents("", "Sports"));
-        entertainmentButton.setOnAction(event -> populateEvents("", "Entertainment"));
-        artCultureButton.setOnAction(event -> populateEvents("", "Arts and Culture"));
-        communityButton.setOnAction(event -> populateEvents("", "Community"));
-        othersButton.setOnAction(event -> populateEvents("", "Others"));
+        allEventsButton.setOnAction(event -> 
+        {
+            Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }
+            populateEvents("", null);
+        }
+        );
+        sportsButton.setOnAction(event -> {
+            Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }
+            populateEvents("", "Sports");});
+        entertainmentButton.setOnAction(event -> {
+            Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }populateEvents("", "Entertainment");});
+        artCultureButton.setOnAction(event -> {
+            Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }populateEvents("", "Arts and Culture");});
+        communityButton.setOnAction(event -> {
+            Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }populateEvents("", "Community");});
+        othersButton.setOnAction(event -> {
+            Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }populateEvents("", "Others");});
 
         allEventsButton.getStyleClass().add("menu-button");
         sportsButton.getStyleClass().add("menu-button");
@@ -78,10 +125,24 @@ public class UserDashboard {
         Button logoutButton = new Button("Logout");
 
         profileButton.setOnAction(event -> {
+            Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }
             UserProfile prof = new UserProfile(stage, username);
             prof.initializeComponents();
         });
         logoutButton.setOnAction(event -> {
+            Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }
             UserLogin login = new UserLogin(stage);
             login.initializeComponents();
         });
