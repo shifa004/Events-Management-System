@@ -1,3 +1,4 @@
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -44,6 +45,13 @@ public class UserChangePassword {
         changePasswordButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event){
+                Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }
                 String oldPassword = oldPasswordField.getText();
                 String newPassword = newPasswordField.getText();
 
@@ -66,6 +74,13 @@ public class UserChangePassword {
         cancel.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event){
+                Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }
                 UserProfile profile = new UserProfile(stage, username);
                 profile.initializeComponents();
             }
