@@ -18,14 +18,13 @@ import javafx.stage.Stage;
 
 public class EditProfile {
     private Scene profileScene;
-    
+
     private Stage stage;
     private String username;
     private String firstName;
     private String lastName;
 
-    public EditProfile(Stage primaryStage, String username, String firstName, String lastName)
-    {
+    public EditProfile(Stage primaryStage, String username, String firstName, String lastName) {
         this.stage = primaryStage;
         this.username = username;
         this.firstName = firstName;
@@ -54,18 +53,39 @@ public class EditProfile {
 
         Button cancel = new Button("Cancel");
         cancel.setOnAction(e -> {
+            Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+                System.out.println("Last activity updated");
+            } else {
+                System.out.println("Session not found for user");
+            }
             UserProfile profile = new UserProfile(stage, username);
             profile.initializeComponents();
         });
 
         Button editPassword = new Button("Edit Password");
         editPassword.setOnAction(e -> {
+            Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }
             UserChangePassword cPassword = new UserChangePassword(stage, username);
             cPassword.initializeComponents();
         });
-        
+
         Button save = new Button("Save Changes");
         save.setOnAction(e -> {
+            Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }
             Boolean valid = true;
             firstName = firstNameTextField.getText();
             lastName = lastNameTextField.getText();
@@ -81,13 +101,13 @@ public class EditProfile {
             } else {
                 lastnameErrorLabel.setText("");
             }
-            if(!valid){
+            if (!valid) {
                 return;
             }
             updateUserDetails();
             UserProfile profile = new UserProfile(stage, username);
             profile.initializeComponents();
-        });     
+        });
 
         // Create a grid pane to arrange components
         GridPane gridPane = new GridPane();
@@ -113,7 +133,7 @@ public class EditProfile {
         // Create the scene and set it on the stage
         VBox all = new VBox();
 
-        //To add margin just for the heading I added the heading to HBox
+        // To add margin just for the heading I added the heading to HBox
         HBox head = new HBox();
         head.getChildren().add(heading);
         head.setMargin(heading, new Insets(20, 0, 0, 20));
@@ -126,7 +146,7 @@ public class EditProfile {
         stage.show();
     }
 
-    private void updateUserDetails(){
+    private void updateUserDetails() {
         Connection con = DBUtils.establishConnection();
         String updateQuery = "UPDATE users SET firstname=?, lastname=? WHERE username=?";
 
