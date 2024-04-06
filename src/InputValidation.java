@@ -1,3 +1,5 @@
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,8 +40,8 @@ public class InputValidation {
 
     
     public static boolean checkFirstName(String name){
-        //Allow any string that contains at least one alphabetical character (either uppercase or lowercase).
-        String regex = ".*[a-zA-Z]+.*";
+        //Allow any string that contains only letters and zero or more occurences of space between the letters.
+        String regex = "^[a-zA-Z]+$";
 
         // Compile the regex into a pattern
         Pattern pattern = Pattern.compile(regex);
@@ -57,7 +59,7 @@ public class InputValidation {
 
     public static boolean checkLastName(String name){
         //Allow any string that contains at least one alphabetical character (either uppercase or lowercase).
-        String regex = ".*[a-zA-Z]+.*";
+        String regex = "^[a-zA-Z]+$";
 
         // Compile the regex into a pattern
         Pattern pattern = Pattern.compile(regex);
@@ -118,6 +120,20 @@ public class InputValidation {
     //         System.out.println("Invalid username");
     //     }
     // }
+    public static Boolean checkSearchField(String searchInput){
+        // Normalize the search input
+        String normalizedInput = Normalizer.normalize(searchInput, Form.NFKC);
+        //Check if it contains any angular brackets
+        String regex = ".*[<>].*";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(normalizedInput);
+        if (matcher.matches()){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
 
     public static Boolean checkEventName(String name){
         //Allows any strings that contain only alphanumeric characters, along with the characters '!', ',', '-', '(', ')', '&', and whitespace characters.
