@@ -129,11 +129,12 @@ public class UserChangePassword {
         System.out.println(hashedPassword);
 
         Connection con = DBUtils.establishConnection();
-        String query = "UPDATE users SET password=? WHERE username =?;";
+        String query = "UPDATE users SET password=?, salt=? WHERE username =?;";
         try{
             PreparedStatement stmt = con.prepareStatement(query);
             stmt.setString(1, hashedPassword);
-            stmt.setString(2, username);
+            stmt.setBytes(2, salt);
+            stmt.setString(3, username);
             Statement statement = con.createStatement();
             int result = stmt.executeUpdate();
             if (result == 1) {
