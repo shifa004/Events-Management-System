@@ -2,10 +2,16 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 //import javafx.geometry.Insets;
@@ -147,10 +153,12 @@ public class UserLogin {
                 System.out.println(hashInput);
 
                 if (storedHashedPassword.equals(hashInput) && inputValidation.checkUsername(username)){
+                    Session.startSession(username);
+                    Session.startSessionExpirationTimer();
                     loginAttempts.remove(username);                    
                     if (user.equals("admin")) {
                         // Redirect to admin dashboard
-                        AdminDashboard adminDashboard = new AdminDashboard(stage);
+                        AdminDashboard adminDashboard = new AdminDashboard(stage, username);
                         adminDashboard.initializeComponents();
                     }
                     else {
@@ -180,7 +188,8 @@ public class UserLogin {
         alert.setContentText(content);
         alert.showAndWait();
     }
-
+    
+    
     private String hashPassword(String password, byte[] salt) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-512");
