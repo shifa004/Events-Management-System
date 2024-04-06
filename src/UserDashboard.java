@@ -112,7 +112,16 @@ public class UserDashboard {
         homeLayout.setVgap(10);
 
         //Search Functionality
-        searchField.addEventHandler(KeyEvent.KEY_RELEASED, e -> populateEvents(searchField.getText(), null));
+        searchField.addEventHandler(KeyEvent.KEY_RELEASED, e -> {
+            String searchText = searchField.getText();
+            if (InputValidation.checkSearchField(searchText)) {
+                populateEvents(searchText, null);
+            } else {
+                //Clear the events display and alert the user of invalid input
+                homeLayout.getChildren().clear();
+                showAlert("Invalid Search", "Please enter a valid search query.");
+            }
+        });
 
         populateEvents("", null);
 
@@ -147,48 +156,43 @@ public class UserDashboard {
         double imageWidth = 230;
         double imageHeight = 200;
         // Filter and display events based on search query and category
-        events.values().stream()
-              .filter(eventData -> {
-                  String name = (String) eventData.get("name");
-                  String category = (String) eventData.get("category");
-                  boolean nameMatches = name.toLowerCase().contains(query.toLowerCase());
-                  boolean categoryMatches = categoryFilter == null || categoryFilter.isBlank() || category.equalsIgnoreCase(categoryFilter);
-                  return nameMatches && categoryMatches;
-              })
-              .forEach(eventData -> {
-                    String name = (String) eventData.get("name");
-                    String imageUrl = (String) eventData.get("image");
+        events.values().stream().filter(eventData -> {
+            String name = (String) eventData.get("name");
+            String category = (String) eventData.get("category");
+            boolean nameMatches = name.toLowerCase().contains(query.toLowerCase());
+            boolean categoryMatches = categoryFilter == null || categoryFilter.isBlank() || category.equalsIgnoreCase(categoryFilter);
+            return nameMatches && categoryMatches;
+        })
+        .forEach(eventData -> {
+            String name = (String) eventData.get("name");
+            String imageUrl = (String) eventData.get("image");
+            ImageView imageView = new ImageView(new Image(imageUrl));
+            imageView.setFitWidth(imageWidth);
+            imageView.setFitHeight(imageHeight);
+            Label nameLabel = new Label(name);
+            nameLabel.setMaxWidth(imageWidth);
+            nameLabel.setWrapText(true);
+            nameLabel.setAlignment(Pos.CENTER);
         
-                    ImageView imageView = new ImageView(new Image(imageUrl));
-                    imageView.setFitWidth(imageWidth);
-                    imageView.setFitHeight(imageHeight);
+            VBox container = new VBox(imageView, nameLabel);
+            container.setMaxWidth(imageWidth);
+            container.setMaxHeight(imageHeight);
+            container.setAlignment(Pos.CENTER);
         
-                    Label nameLabel = new Label(name);
-                    nameLabel.setMaxWidth(imageWidth);
-                    nameLabel.setWrapText(true);
-                    nameLabel.setAlignment(Pos.CENTER);
+            // Set eventData as a property of the container
+            container.getProperties().put("eventData", eventData);
         
-                    VBox container = new VBox(imageView, nameLabel);
-                    container.setMaxWidth(imageWidth);
-                    container.setMaxHeight(imageHeight);
-                    container.setAlignment(Pos.CENTER);
-        
-                    // Set eventData as a property of the container
-                    container.getProperties().put("eventData", eventData);
-        
-                    container.setOnMouseClicked(event -> {
-                        // Retrieve eventData from the container when clicked
-                        @SuppressWarnings("unchecked")
-                        Map<String, Object> clickedEventData = (Map<String, Object>) container.getProperties().get("eventData");
+            container.setOnMouseClicked(event -> {
+                // Retrieve eventData from the container when clicked
+                @SuppressWarnings("unchecked")
+                Map<String, Object> clickedEventData = (Map<String, Object>) container.getProperties().get("eventData");
                         
-                        EventDetails eventDetails = new EventDetails(stage, name);
-                        eventDetails.initializeComponents(clickedEventData);
-                    });        
+                EventDetails eventDetails = new EventDetails(stage, username);
+                eventDetails.initializeComponents(clickedEventData);
+            });        
                     
-                    homeLayout.getChildren().add(container);
-              });
-        
-        // You might need to adjust this section to correctly re-add homeLayout to the scene, if necessary
+            homeLayout.getChildren().add(container);
+        });
     }
 
     private static Map<Integer, Map<String, Object>> getEvents() {

@@ -24,8 +24,8 @@ public class UserLogin {
     private PasswordField passwordField = new PasswordField();
     InputValidation inputValidation= new InputValidation(); 
 
-    Label usernameErrorLabel = new Label();
-    Label passwordErrorLabel = new Label();
+    // Label usernameErrorLabel = new Label();
+    // Label usernamePasswordErrorLabel = new Label();
 
     private static final int maxAttempts = 5;
     private static final long resetTime = TimeUnit.MINUTES.toMillis(5);
@@ -73,11 +73,12 @@ public class UserLogin {
         Label passwordLabel = new Label("Password:");
         passwordLabel.getStyleClass().add("login-label");
 
-        usernameErrorLabel.setStyle("-fx-text-fill: red;");
-        passwordErrorLabel.setStyle("-fx-text-fill: red;");
+        // usernameErrorLabel.setStyle("-fx-text-fill: red;");
+        // usernamePasswordErrorLabel.setStyle("-fx-text-fill: red;");
 
-        loginLayout.getChildren().addAll(usernameLabel, usernameField, usernameErrorLabel,
-                passwordLabel, passwordField, passwordErrorLabel,
+        loginLayout.getChildren().addAll(usernameLabel, usernameField,
+                passwordLabel, passwordField, 
+                // usernamePasswordErrorLabel,
                 loginButton,
                 new Label("Don't have an account?"), signUpButton);
 
@@ -87,6 +88,7 @@ public class UserLogin {
 
         //Add scene to stage
         stage.setScene(loginScene);
+        stage.hide();
         stage.setWidth(300);
         stage.setHeight(400);
         stage.centerOnScreen();
@@ -102,18 +104,19 @@ public class UserLogin {
 
         //Input Validation
         Boolean valid = true;
-        if (!InputValidation.checkUsername(username)) {
-            usernameErrorLabel.setText("Invalid username.");
+        // if (!InputValidation.checkUsername(username)) {
+        //     usernameErrorLabel.setText("Invalid username.");
+        //     valid = false;
+        // } else {
+        //     usernameErrorLabel.setText("");
+        // }
+        if (!InputValidation.checkUsername(username) || !InputValidation.checkPassword(password)) {
+            showAlert("Authentication Failed", "Invalid username or password.");
             valid = false;
-        } else {
-            usernameErrorLabel.setText("");
         }
-        if (!InputValidation.checkPassword(password)) {
-            passwordErrorLabel.setText("Invalid password");
-            valid = false;
-        } else {
-            passwordErrorLabel.setText("");
-        }
+        //  else {
+        //      usernamePasswordErrorLabel.setText("");
+        // }
         if(!valid){
             return;
         }
@@ -137,7 +140,11 @@ public class UserLogin {
                 String storedHashedPassword = rs.getString("password");
                 byte[] storedSalt = rs.getBytes("salt");
 
+                System.out.println(storedHashedPassword);
+
                 String hashInput = hashPassword(password, storedSalt);
+                System.out.println(password);
+                System.out.println(hashInput);
 
                 if (storedHashedPassword.equals(hashInput) && inputValidation.checkUsername(username)){
                     loginAttempts.remove(username);                    
