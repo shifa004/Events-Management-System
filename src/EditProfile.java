@@ -36,6 +36,10 @@ public class EditProfile {
     public void initializeComponents() {
         Text heading = new Text("Edit Profile");
         heading.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        Label firstnameErrorLabel = new Label();
+        Label lastnameErrorLabel = new Label();
+        firstnameErrorLabel.setStyle("-fx-text-fill: red;");
+        lastnameErrorLabel.setStyle("-fx-text-fill: red;");
 
         // Create labels and text fields for user information
         Label nameLabel = new Label("Username:");
@@ -62,12 +66,28 @@ public class EditProfile {
         
         Button save = new Button("Save Changes");
         save.setOnAction(e -> {
+            Boolean valid = true;
             firstName = firstNameTextField.getText();
             lastName = lastNameTextField.getText();
+            if (!InputValidation.checkFirstName(firstName)) {
+                firstnameErrorLabel.setText("Invalid First Name.");
+                valid = false;
+            } else {
+                firstnameErrorLabel.setText("");
+            }
+            if (!InputValidation.checkLastName(lastName)) {
+                lastnameErrorLabel.setText("Invalid Last Name");
+                valid = false;
+            } else {
+                lastnameErrorLabel.setText("");
+            }
+            if(!valid){
+                return;
+            }
             updateUserDetails();
             UserProfile profile = new UserProfile(stage, username);
             profile.initializeComponents();
-        });
+        });     
 
         // Create a grid pane to arrange components
         GridPane gridPane = new GridPane();
@@ -80,8 +100,10 @@ public class EditProfile {
         gridPane.add(nameTextField, 1, 0);
         gridPane.add(firstNameLabel, 0, 1);
         gridPane.add(firstNameTextField, 1, 1);
+        gridPane.add(firstnameErrorLabel, 2, 1);
         gridPane.add(lastNameLabel, 0, 2);
         gridPane.add(lastNameTextField, 1, 2);
+        gridPane.add(lastnameErrorLabel, 2, 2);
 
         HBox buttons = new HBox();
         buttons.getChildren().addAll(cancel, editPassword, save);
