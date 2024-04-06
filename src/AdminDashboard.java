@@ -21,10 +21,11 @@ public class AdminDashboard {
     // private TextField usernameField = new TextField();
     // private PasswordField passwordField = new PasswordField();
     private Stage stage;
+    private String username;
     
-    public AdminDashboard(Stage primaryStage) {
+    public AdminDashboard(Stage primaryStage, String username) {
         this.stage = primaryStage;
-        
+        this.username = username;
     }
 
     public void initializeComponents() {
@@ -35,14 +36,29 @@ public class AdminDashboard {
         HBox topButtons = new HBox(10);
         Button Add = new Button("Add Event");
         Add.setOnAction(new EventHandler<ActionEvent>() {
+            
             @Override
             public void handle(ActionEvent event) {
+                Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }
                 AddStage();
             }
         });
 
         Button logoutButton = new Button("Logout");
         logoutButton.setOnAction(event -> {
+            Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }
             UserLogin login = new UserLogin(stage);
             login.initializeComponents();
         });
@@ -109,13 +125,28 @@ public class AdminDashboard {
                 Edit.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
+                        Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }
                         EditStage(id, name, description, date, time, location, image, category);
                     }
                 });
                 Button Delete = new Button("Archive");
                 Delete.setOnAction(new EventHandler<ActionEvent>() {
+
                     @Override
                     public void handle(ActionEvent event) {
+                        Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }
                         archiveEvent(id);
                     }
                 });
@@ -241,7 +272,15 @@ public class AdminDashboard {
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                // Handle adding the event to the database
+                Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }
+
+
                 String name = eventNameField.getText();
                 String description = eventDescriptionField.getText();
                 String date = eventDateField.getText();
@@ -363,6 +402,13 @@ public class AdminDashboard {
         saveButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {    
+                Session session = Session.sessions.get(username);
+            if (session != null) {
+                session.updateLastActivity();
+            } else {
+                UserLogin login = new UserLogin(stage);
+                login.initializeComponents();
+            }
                 Boolean valid = true;
                 if (!InputValidation.checkEventName(nameField.getText())) {
                     nameErrorLabel.setText("Invalid event name");
